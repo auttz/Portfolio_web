@@ -1,9 +1,10 @@
 import Home from '@/components/Home/Home'
 import React from 'react'
+import LoginPage from '@/components/Home/LoginPage/LoginPage'
 
 const Homepage = () => {
   return (
-    <Home />
+    <LoginPage />
   )
 }
 

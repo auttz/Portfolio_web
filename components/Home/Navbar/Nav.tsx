@@ -1,70 +1,109 @@
 "use client";
-import { NavLinks } from "@/constant/constant";
-import Link from "next/link";
-import React, { useEffect, useState } from "react";
-import { BiDownload } from "react-icons/bi";
-import { FaCode } from "react-icons/fa";
-import { HiBars3BottomRight } from "react-icons/hi2";
+import { useState } from "react";
+import { Menu, X, Home, User, Briefcase, Mail, FileText } from "lucide-react";
+import { useRouter } from "next/navigation";
 
-type Props = {
-  openNav: () => void;
-}
-const Nav = ({openNav} : Props) => {
-  const [navBg, setNavBg] = useState(false);
-  useEffect(() => {
-    const handler = () => {
-      if (window.scrollY >= 90) setNavBg(true);
-      if (window.scrollY < 90) setNavBg(false);
-    };
-    window.addEventListener("scroll", handler);
-    return () => window.addEventListener("scroll", handler);
-  }, []);
+export default function Navbar() {
+  const [isOpen, setIsOpen] = useState(false);
+  const router = useRouter();
+
+  const navItems = [
+    { name: "หน้าหลัก", href: "#home", icon: Home },
+    { name: "เกี่ยวกับ", href: "#about", icon: User },
+    { name: "ทักษะ", href: "#skills", icon: FileText },
+  ];
+
+  const handleLogout = () => {
+    alert('ออกจากระบบเรียบร้อย !');
+    router.push("/login")
+  };
+
   return (
-    <div
-      className={`transition-all ${
-        navBg ? "bg-[#0f142ed9] shadow-md" : "fixed"
-      } duration-200 h-[12vh] z-[10000] fixed w-full`}
-    >
-      <div className="flex items-center h-full justify-between w-[90%] mx-auto">
-        {/* logo */}
-        <div className="flex items-center space-x-2">
-          <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center flex-col">
-            <FaCode className="w-5 h-5 text-black" />
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-slate-900/80 backdrop-blur-md border-b border-slate-800/50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16">
+          {/* Logo */}
+          <div className="flex-shrink-0">
+            <a href="#home" className="flex items-center space-x-2">
+              <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                <span className="text-white font-bold text-xl">P</span>
+              </div>
+              <span className="text-xl font-bold text-white">Portfolio</span>
+            </a>
           </div>
-          <h1 className="text-xl hidden sm:block md:text-2xl text-white font-bold">
-            Supreecha
-          </h1>
-        </div>
-        {/* Navlinks */}
-        <div className="hidden lg:flex items-center space-x-10">
-          {NavLinks.map((link) => {
-            return (
-              <Link
-                key={link.id}
-                href={link.url}
-                className="text-base hover:text-cyan-300 text-white font-medium transition-all duration-200"
-              >
-                <p>{link.label}</p>
-              </Link>
-            );
-          })}
-        </div>
-        {/* button */}
-        <div className="flex items-center space-x-4">
-          {/* CV button */}
+
+          {/* Desktop Menu */}
+          <div className="hidden md:block">
+            <div className="flex items-center space-x-1">
+              {navItems.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <a
+                    key={item.name}
+                    href={item.href}
+                    className="px-4 py-2 rounded-lg text-gray-300 hover:bg-slate-800/50 hover:text-white transition-all duration-200 flex items-center space-x-2 group"
+                  >
+                    <Icon className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                    <span className="font-medium">{item.name}</span>
+                  </a>
+                );
+              })}
+            </div>
+          </div>
           <button
-            className="px-8 py-3.5 text-sm cursor-pointer rounded-lg bg-blue-800 hover:bg-blue-900 
-          transition-all duration-300 text-white flex items-center space-x-2"
+            type="button"
+            onClick={handleLogout}
+            className="text-white bg-gradient-to-r from-red-400 via-red-500 to-red-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 cursor-pointer"
           >
-            <BiDownload className="w-5 h-5" />
-            <span>Download CV</span>
+            ออกจากระบบ
           </button>
-          {/* Burger menu bar */}
-          <HiBars3BottomRight onClick={openNav} className="w-8 h-8 cursor-pointer text-white lg:hidden" />
+
+          {/* Mobile Menu Button */}
+          <div className="md:hidden">
+            <button
+              onClick={() => setIsOpen(!isOpen)}
+              className="p-2 rounded-lg text-gray-300 hover:bg-slate-800/50 hover:text-white transition-colors"
+            >
+              {isOpen ? (
+                <X className="w-6 h-6" />
+              ) : (
+                <Menu className="w-6 h-6" />
+              )}
+            </button>
+          </div>
         </div>
       </div>
-    </div>
-  );
-};
 
-export default Nav;
+      {/* Mobile Menu */}
+      <div
+        className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out ${
+          isOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
+        }`}
+      >
+        <div className="px-4 pt-2 pb-4 space-y-1 bg-slate-900/95 backdrop-blur-md border-t border-slate-800/50">
+          {navItems.map((item) => {
+            const Icon = item.icon;
+            return (
+              <a
+                key={item.name}
+                href={item.href}
+                onClick={() => setIsOpen(false)}
+                className="flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-300 hover:bg-slate-800/50 hover:text-white transition-all duration-200"
+              >
+                <Icon className="w-5 h-5" />
+                <span className="font-medium">{item.name}</span>
+              </a>
+            );
+          })}
+          <a
+            href="#contact"
+            onClick={() => setIsOpen(false)}
+            className="block w-full mt-4 px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white text-center rounded-lg font-medium hover:from-blue-600 hover:to-purple-700 transition-all duration-200 shadow-lg shadow-blue-500/20"
+          >
+            ติดต่อเลย
+          </a>
+        </div>
+      </div>
+    </nav>
+  );
+}
