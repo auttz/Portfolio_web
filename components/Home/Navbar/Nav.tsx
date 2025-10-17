@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { Menu, X, Home, User, Briefcase, Mail, FileText } from "lucide-react";
+import { Menu, X, Home, User, FileText, LogOut } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 export default function Navbar() {
@@ -11,11 +11,19 @@ export default function Navbar() {
     { name: "หน้าหลัก", href: "#home", icon: Home },
     { name: "เกี่ยวกับ", href: "#about", icon: User },
     { name: "ทักษะ", href: "#skills", icon: FileText },
+    { name: "ออกจากระบบ", href: "#logout", icon: LogOut, isLogout: true },
   ];
 
   const handleLogout = () => {
-    alert('ออกจากระบบเรียบร้อย !');
-    router.push("/login")
+    alert("ออกจากระบบเรียบร้อย !");
+    router.push("/login");
+  };
+
+  const handleNavClick = (item: any) => {
+    if (item.isLogout) {
+      handleLogout();
+    }
+    setIsOpen(false);
   };
 
   return (
@@ -37,6 +45,22 @@ export default function Navbar() {
             <div className="flex items-center space-x-1">
               {navItems.map((item) => {
                 const Icon = item.icon;
+
+                // ✅ ปุ่ม Logout
+                if (item.isLogout) {
+                  return (
+                    <button
+                      key={item.name}
+                      onClick={handleLogout}
+                      className="px-4 py-2 rounded-lg text-red-400 hover:bg-red-900/30 hover:text-red-300 transition-all duration-200 flex items-center space-x-2 group"
+                    >
+                      <Icon className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                      <span className="font-medium">{item.name}</span>
+                    </button>
+                  );
+                }
+
+                // ✅ ลิงก์ทั่วไป
                 return (
                   <a
                     key={item.name}
@@ -50,13 +74,6 @@ export default function Navbar() {
               })}
             </div>
           </div>
-          <button
-            type="button"
-            onClick={handleLogout}
-            className="text-white bg-gradient-to-r from-red-400 via-red-500 to-red-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 cursor-pointer"
-          >
-            ออกจากระบบ
-          </button>
 
           {/* Mobile Menu Button */}
           <div className="md:hidden">
@@ -64,11 +81,7 @@ export default function Navbar() {
               onClick={() => setIsOpen(!isOpen)}
               className="p-2 rounded-lg text-gray-300 hover:bg-slate-800/50 hover:text-white transition-colors"
             >
-              {isOpen ? (
-                <X className="w-6 h-6" />
-              ) : (
-                <Menu className="w-6 h-6" />
-              )}
+              {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
           </div>
         </div>
@@ -83,11 +96,25 @@ export default function Navbar() {
         <div className="px-4 pt-2 pb-4 space-y-1 bg-slate-900/95 backdrop-blur-md border-t border-slate-800/50">
           {navItems.map((item) => {
             const Icon = item.icon;
+
+            if (item.isLogout) {
+              return (
+                <button
+                  key={item.name}
+                  onClick={() => handleNavClick(item)}
+                  className="flex items-center space-x-3 px-4 py-3 rounded-lg text-red-400 hover:bg-red-900/30 hover:text-red-300 transition-all duration-200 w-full text-left"
+                >
+                  <Icon className="w-5 h-5" />
+                  <span className="font-medium">{item.name}</span>
+                </button>
+              );
+            }
+
             return (
               <a
                 key={item.name}
                 href={item.href}
-                onClick={() => setIsOpen(false)}
+                onClick={() => handleNavClick(item)}
                 className="flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-300 hover:bg-slate-800/50 hover:text-white transition-all duration-200"
               >
                 <Icon className="w-5 h-5" />
@@ -95,13 +122,6 @@ export default function Navbar() {
               </a>
             );
           })}
-          <a
-            href="#contact"
-            onClick={() => setIsOpen(false)}
-            className="block w-full mt-4 px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white text-center rounded-lg font-medium hover:from-blue-600 hover:to-purple-700 transition-all duration-200 shadow-lg shadow-blue-500/20"
-          >
-            ติดต่อเลย
-          </a>
         </div>
       </div>
     </nav>
